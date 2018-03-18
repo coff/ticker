@@ -76,7 +76,7 @@ class Tick
     /**
      * @return callable
      */
-    public function getCallback(): callable
+    public function getCallback()
     {
         return $this->callback;
     }
