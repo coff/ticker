@@ -2,7 +2,8 @@
 
 namespace Coff\Ticker;
 
-class Tick {
+class Tick
+{
 
     /** @var string */
     protected $tickType;
@@ -31,7 +32,8 @@ class Tick {
         $this->params = $params;
     }
 
-    public function call() {
+    public function call()
+    {
         call_user_func_array($this->callback, $this->params);
     }
 

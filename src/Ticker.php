@@ -16,11 +16,16 @@ class Ticker
         SECOND = 's',
         MICROSECOND = 'u';
 
-    protected $uSleep=1;
-    protected $sleep=0;
+    /** @var int $uSleep sleep time in microseconds */
+    protected $uSleep = 0;
+
+    /** @var int $sleep sleep time in seconds */
+    protected $sleep = 0;
+
+    /** @var bool $sleepLocked whether sleepTime is set manually (normally is determined automatically upon Ticks' periods */
     protected $sleepLocked = false;
 
-    /** @var  */
+    /** @var */
     protected $callbacks = [
         self::MICROSECOND => [],
         self::SECOND => [],
@@ -32,13 +37,27 @@ class Ticker
         self::YEAR => [],
     ];
 
+    /** @var array $activeTicks keeps periods that have Ticks added */
     protected $activeTicks;
 
+    /** @var array $lasts keeps last calls for each period */
     private $lasts;
-    private $periods = [self::YEAR, self::MONTH, self::WEEK, self::DAY, self::HOUR, self::MINUTE, self::SECOND, self::MICROSECOND];
+
+    /** @var array $periods */
+    private $periods = [
+        self::YEAR,
+        self::MONTH,
+        self::WEEK,
+        self::DAY,
+        self::HOUR,
+        self::MINUTE,
+        self::SECOND,
+        self::MICROSECOND,
+    ];
 
 
-    public function loop() {
+    public function loop()
+    {
 
         $timeFormat = implode(',', $this->periods);
 
@@ -46,7 +65,8 @@ class Ticker
 
         $this->lasts = array_combine($this->periods, explode(",", date($timeFormat)));
 
-        while(true) {
+        /* main loop */
+        while (true) {
 
             /* \DateTime supports microseconds, date() does not */
             $dateTime = new \DateTime();
@@ -76,49 +96,16 @@ class Ticker
         }
     }
 
-    public function addTick(Tick $tick, $updateActiveTicks = true) {
-
-        $this->callbacks[$tick->getTickType()][] = $tick;
-
-        if ($updateActiveTicks) {
-            $this->updateActiveTicks();
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param int $uSleep
-     * @return Ticker
-     */
-    public function setUSleep(int $uSleep): Ticker
-    {
-        $this->uSleep = $uSleep;
-        $this->sleepLocked = true;
-
-        return $this;
-    }
-
-    /**
-     * @param int $sleep
-     * @return Ticker
-     */
-    public function setSleep(int $sleep): Ticker
-    {
-        $this->sleep = $sleep;
-        $this->sleepLocked = true;
-
-        return $this;
-    }
-
     /**
      * Updates list of active ticks
      */
-    protected function updateActiveTicks() {
+    protected function updateActiveTicks()
+    {
         $this->activeTicks = [];
 
         if ($this->sleepLocked === false) {
-            $this->uSleep = null; $this->sleep = null;
+            $this->uSleep = null;
+            $this->sleep = null;
         }
 
         foreach ($this->callbacks as $tickType => $callbacks) {
@@ -167,6 +154,48 @@ class Ticker
                 }
             }
         }
+    }
+
+    /**
+     * Adds tick definition
+     * @param Tick $tick
+     * @param bool $updateActiveTicks
+     * @return $this
+     */
+    public function addTick(Tick $tick, $updateActiveTicks = true)
+    {
+
+        $this->callbacks[$tick->getTickType()][] = $tick;
+
+        if ($updateActiveTicks) {
+            $this->updateActiveTicks();
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param int $uSleep
+     * @return $this
+     */
+    public function setUSleep(int $uSleep)
+    {
+        $this->uSleep = $uSleep;
+        $this->sleepLocked = true;
+
+        return $this;
+    }
+
+    /**
+     * @param int $sleep
+     * @return $this
+     */
+    public function setSleep(int $sleep)
+    {
+        $this->sleep = $sleep;
+        $this->sleepLocked = true;
+
+        return $this;
     }
 
 }
