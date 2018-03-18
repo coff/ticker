@@ -47,9 +47,9 @@ class Tick
 
     /**
      * @param string $tickType
-     * @return Tick
+     * @return $this
      */
-    public function setTickType(string $tickType): Tick
+    public function setTickType(string $tickType)
     {
         $this->tickType = $tickType;
         return $this;
@@ -58,16 +58,16 @@ class Tick
     /**
      * @return int
      */
-    public function getEveryN(): int
+    public function getEveryN()
     {
         return $this->everyN;
     }
 
     /**
      * @param int $everyN
-     * @return Tick
+     * @return $this
      */
-    public function setEveryN(int $everyN): Tick
+    public function setEveryN(int $everyN)
     {
         $this->everyN = $everyN;
         return $this;
@@ -83,9 +83,9 @@ class Tick
 
     /**
      * @param callable $callback
-     * @return Tick
+     * @return $this
      */
-    public function setCallback(callable $callback): Tick
+    public function setCallback(callable $callback)
     {
         $this->callback = $callback;
         return $this;
@@ -94,16 +94,16 @@ class Tick
     /**
      * @return array
      */
-    public function getParams(): array
+    public function getParams()
     {
         return $this->params;
     }
 
     /**
      * @param array $params
-     * @return Tick
+     * @return $this
      */
-    public function setParams(array $params): Tick
+    public function setParams(array $params)
     {
         $this->params = $params;
         return $this;
