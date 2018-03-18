@@ -1,0 +1,21 @@
+{
+    "name": "coff/ticker",
+    "description": "Clock based event dispatcher",
+    "type": "library",
+    "require-dev": {
+        "symfony/event-dispatcher": "^4.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Krzysztof Kubanek",
+            "email": "krzysztof.kubanek@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Coff\\Ticker\\": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
