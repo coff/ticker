@@ -82,7 +82,7 @@ class Ticker
                     foreach ($this->callbacks[$tickType] as $tick) {
 
                         if ($time[$tickType] % $tick->getEveryN() == 0) {
-                            $tick->call();
+                            $tick->run();
                         }
                     }
 
@@ -162,7 +162,7 @@ class Ticker
      * @param bool $updateActiveTicks
      * @return $this
      */
-    public function addTick(Tick $tick, $updateActiveTicks = true)
+    public function addTick(TickInterface $tick, $updateActiveTicks = true)
     {
 
         $this->callbacks[$tick->getTickType()][] = $tick;
