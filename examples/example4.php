@@ -55,7 +55,6 @@ $ticker = new Ticker();
 $ticker->addTick($t1 = new FactoryA(Ticker::SECOND, 1));
 $ticker->addTick($t2 = new FactoryB(Ticker::SECOND, 1));
 
-$t1->setPool(new \Pool(1, \Worker::class));
-$t2->setPool(new \Pool(1, \Worker::class));
+/* Factories create threading Pool containers by themselves in this case. */
 
 $ticker->loop();

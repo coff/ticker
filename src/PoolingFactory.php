@@ -23,11 +23,18 @@ abstract class PoolingFactory implements TickInterface
      * PoolingFactory constructor.
      * @param string $tickType
      * @param int $everyN
+     * @param \Pool|null $pool threading pool container, created automatically when given null here
      */
-    public function __construct($tickType, $everyN)
+    public function __construct($tickType, $everyN, \Pool $pool = null)
     {
         $this->setTickType($tickType);
         $this->setEveryN($everyN);
+
+        if (null === $pool) {
+            $pool = new \Pool(1, \Worker::class);
+        }
+
+        $this->setPool($pool);
 
         /* initialise default collector */
         $this->collector = [$this, 'collect'];
