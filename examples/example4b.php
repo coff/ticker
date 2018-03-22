@@ -52,7 +52,9 @@ class FactoryB extends PoolingFactory
 
 $ticker = new Ticker();
 
-$ticker->addTick($t1 = new FactoryA(Ticker::SECOND, 1));
-$ticker->addTick($t2 = new FactoryB(Ticker::SECOND, 1));
+$pool = new \Pool(3, \Worker::class);
+
+$ticker->addTick($t1 = new FactoryA(Ticker::SECOND, 1, $pool));
+$ticker->addTick($t2 = new FactoryB(Ticker::SECOND, 1, $pool));
 
 $ticker->loop();
