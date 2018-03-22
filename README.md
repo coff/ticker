@@ -1,6 +1,18 @@
 # Ticker
 
-Simple yet very powerful time period based event dispatcher.
+Simple yet powerful time period based event dispatcher.
+
+## Features
+
+- lightweight algorithm - see ```Ticker::loop()```
+- open architecture - see: ```TickInterface```, ```TickableTrait```
+- automatically determined main loop's sleep time (based upon defined Ticks) to save on processor usage - see: ```Ticker::updateActiveTicks()```
+- threading supported for PHP 7.2+ - see: http://php.net/manual/en/book.pthreads.php
+- several ways of defining task to be executed:
+  - callbacks
+  - trait based
+  - extending class based
+  - through factory (for threading)
 
 ## Usage examples
 
@@ -24,7 +36,7 @@ $ticker->addTick(new Tick(Ticker::MINUTE, 1, function() {
 $ticker->loop();
 ```
 
-### Simple Tick Object
+### Extending class based
 
 ```php
 
@@ -75,6 +87,11 @@ class FactoryB extends PoolingFactory {
 }
 
 $ticker = new Ticker();
+```
+
+with separate pools:
+
+```php
 
 $ticker->addTick($t1 = new FactoryA(Ticker::SECOND, 1));
 $ticker->addTick($t2 = new FactoryB(Ticker::SECOND, 1));
@@ -85,7 +102,7 @@ $ticker->loop();
 
 ```
 
-and shared Pool example:
+and shared pool:
 
 ```php
 $pool = new \Pool(3, \Worker::class);
