@@ -1,9 +1,11 @@
 <?php
 
-
 namespace Coff\Ticker;
 
-
+/**
+ * Class Ticker
+ * @package Coff\Ticker
+ */
 class Ticker
 {
     const
@@ -56,6 +58,9 @@ class Ticker
     ];
 
 
+    /**
+     * Main ticker loop. Call it to execute Ticker.
+     */
     public function loop()
     {
 
@@ -102,9 +107,9 @@ class Ticker
     }
 
     /**
-     * Updates list of active ticks
+     * Updates list of active ticks. Automatically performed upon each addTick() call.
      */
-    protected function updateActiveTicks()
+    public function updateActiveTicks()
     {
         $this->activeTicks = [];
 
@@ -119,7 +124,7 @@ class Ticker
                 $this->activeTicks[] = $tickType;
 
                 /* continue if sleep time is locked or already estabilished */
-                if ($this->sleepLocked || $this->sleep !== null || $this->uSleep !== null) {
+                if (true === $this->sleepLocked) {
                     continue;
                 }
 
@@ -163,7 +168,7 @@ class Ticker
 
     /**
      * Adds tick definition
-     * @param Tick $tick
+     * @param TickInterface $tick
      * @param bool $updateActiveTicks
      * @return $this
      */
@@ -180,25 +185,42 @@ class Ticker
     }
 
     /**
-     * @param int $uSleep
+     * Sets uSleep time manually - value that ticker can't overwrite (unless given null here) with its automatically
+     * determined value.
+     *
+     * @param int|null $uSleep
      * @return $this
      */
-    public function setUSleep(int $uSleep)
+    public function setUSleep(int $uSleep = null)
     {
         $this->uSleep = $uSleep;
-        $this->sleepLocked = true;
+
+        if ($uSleep === null) {
+            $this->sleepLocked = false;
+        } else {
+            $this->sleepLocked = true;
+        }
 
         return $this;
     }
 
     /**
-     * @param int $sleep
+     * Sets uSleep time manually - value that ticker can't overwrite (unless given null here) with its automatically
+     * determined value.
+     *
+     * @param int|null $sleep
      * @return $this
      */
-    public function setSleep(int $sleep)
+    public function setSleep(int $sleep = null)
     {
         $this->sleep = $sleep;
-        $this->sleepLocked = true;
+
+        if ($sleep === null) {
+            $this->sleepLocked = false;
+        } else {
+            $this->sleepLocked = true;
+        }
+
 
         return $this;
     }

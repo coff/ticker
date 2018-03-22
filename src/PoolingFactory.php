@@ -1,9 +1,14 @@
 <?php
 
-
 namespace Coff\Ticker;
 
-
+/**
+ * Class PoolingFactory
+ *
+ * Use this class to factorize threads for use with Ticker object.
+ *
+ * @package Coff\Ticker
+ */
 abstract class PoolingFactory implements TickInterface
 {
     use TickableTrait;
@@ -11,35 +16,78 @@ abstract class PoolingFactory implements TickInterface
     /** @var \Pool */
     protected $pool;
 
+    /** @var callable */
     protected $collector;
 
-    public function __construct($tickType, int $everyN)
+    /**
+     * PoolingFactory constructor.
+     * @param string $tickType
+     * @param int $everyN
+     */
+    public function __construct($tickType, $everyN)
     {
         $this->setTickType($tickType);
         $this->setEveryN($everyN);
+
+        /* initialise default collector */
+        $this->collector = [$this, 'collect'];
     }
 
-    public function setPool(\Pool $pool) {
+    /**
+     * @param \Pool $pool
+     * @return $this
+     */
+    public function setPool(\Pool $pool)
+    {
         $this->pool = $pool;
         return $this;
     }
 
     /**
-     * @param mixed $collector
-     * @return PoolingFactory
+     * @return \Pool
      */
-    public function setCollector($collector)
+    public function getPool(): \Pool
+    {
+        return $this->pool;
+    }
+
+    /**
+     * @param callable $collector
+     * @return $this
+     */
+    public function setCollector(callable $collector)
     {
         $this->collector = $collector;
         return $this;
     }
 
-    abstract public function factorize();
-
+    /**
+     * Default run method.
+     */
     public function run()
     {
         $this->pool->submit($this->factorize());
+
+        /* Default behaviour is to collect() here but more complex solutions may require
+         * doing collect() with a separate Tick added to Ticker
+         */
         $this->pool->collect($this->collector);
     }
 
+    /**
+     * @return \Threaded
+     */
+    abstract public function factorize();
+
+    /**
+     * Collects finished threads for post-run processing
+     *
+     * Remark: If Pool is shared among several Factories then we can get here not only this Factory's threads!
+     *
+     * @param \Threaded $garbage
+     */
+    public function collect(\Threaded $garbage)
+    {
+        // default method does nothing atm
+    }
 }

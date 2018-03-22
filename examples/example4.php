@@ -55,12 +55,7 @@ $ticker = new Ticker();
 $ticker->addTick($t1 = new FactoryA(Ticker::SECOND, 1));
 $ticker->addTick($t2 = new FactoryB(Ticker::SECOND, 1));
 
-$t1
-    ->setPool(new \Pool(1, \Worker::class))
-    ->setCollector(function(\Threaded $garbage) { });
-$t2
-    ->setPool(new \Pool(1, \Worker::class))
-    ->setCollector(function(\Threaded $garbage) { });
-
+$t1->setPool(new \Pool(1, \Worker::class));
+$t2->setPool(new \Pool(1, \Worker::class));
 
 $ticker->loop();

@@ -2,6 +2,13 @@
 
 namespace Coff\Ticker;
 
+/**
+ * Class CallableTick
+ *
+ * Use this to define simplest possible ticks - based on callback functions.
+ *
+ * @package Coff\Ticker
+ */
 class CallableTick implements TickInterface
 {
     use TickableTrait;
@@ -27,6 +34,9 @@ class CallableTick implements TickInterface
         $this->params = $params;
     }
 
+    /**
+     * Run calling a callback
+     */
     public function run()
     {
         call_user_func_array($this->callback, $this->params);
