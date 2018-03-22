@@ -81,6 +81,11 @@ class Ticker
                     /** @var Tick $tick */
                     foreach ($this->callbacks[$tickType] as $tick) {
 
+                        /*  Remark:
+                         *    A flaw of this kind of design is that some ticks
+                         *    may get skipped if other tasks take too much time.
+                         *    Risk is greater when everyN > 1
+                         */
                         if ($time[$tickType] % $tick->getEveryN() == 0) {
                             $tick->run();
                         }
