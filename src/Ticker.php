@@ -16,6 +16,10 @@ class Ticker
         HOUR = 'G',
         MINUTE = 'i',
         SECOND = 's',
+        SECOND_10TH = 's/10',
+        SECOND_100TH = 's/100',
+        SECOND_1000TH = 's/1000',
+        SECOND_10000TH = 's/10000',
         MICROSECOND = 'u';
 
     /** @var int $uSleep sleep time in microseconds */
@@ -30,6 +34,10 @@ class Ticker
     /** @var */
     protected $callbacks = [
         self::MICROSECOND => [],
+        self::SECOND_10000TH => [],
+        self::SECOND_1000TH => [],
+        self::SECOND_100TH => [],
+        self::SECOND_10TH => [],
         self::SECOND => [],
         self::MINUTE => [],
         self::HOUR => [],
@@ -78,7 +86,13 @@ class Ticker
 
             $time = array_combine($this->periods, explode(",", $dateTime->format($timeFormat)));
 
+            $time[self::SECOND_10TH] = substr($time[self::MICROSECOND],0,1);
+            $time[self::SECOND_100TH] = substr($time[self::MICROSECOND],0,2);
+            $time[self::SECOND_1000TH] = substr($time[self::MICROSECOND],0,3);
+            $time[self::SECOND_10000TH] = substr($time[self::MICROSECOND],0,4);
+
             foreach ($this->activeTicks as $tickType) {
+
 
                 /* let's verify if we already called callbacks for current usec, sec, min, hr, ... */
                 if ($time[$tickType] !== $this->lasts[$tickType]) {
@@ -128,10 +142,30 @@ class Ticker
                     continue;
                 }
 
+                /* smallest time callback goes first and decide */
+                if (false === is_null($this->sleep)) {
+                    continue;
+                }
                 /*
                  * Automatically determine sleep/usleep.
                  */
                 switch ($tickType) {
+                    case self::SECOND_10000TH:
+                        $this->uSleep = 10; // 1/10000th of a second
+                        $this->sleep = 0;
+                        break;
+                    case self::SECOND_1000TH:
+                        $this->uSleep = 100; // 1/10000th of a second
+                        $this->sleep = 0;
+                        break;
+                    case self::SECOND_100TH:
+                        $this->uSleep = 1000; // 1/1000th of a second
+                        $this->sleep = 0;
+                        break;
+                    case self::SECOND_10TH:
+                        $this->uSleep = 10000; // 1/100th of a second
+                        $this->sleep = 0;
+                        break;
                     case self::SECOND:
                         $this->uSleep = 100000; // 1/10th of a second
                         $this->sleep = 0;
