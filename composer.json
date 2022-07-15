@@ -14,5 +14,8 @@
             "Coff\\Ticker\\": "src/"
         }
     },
+    "require": {
+        "php": ">=8.1"
+    },
     "minimum-stability": "dev"
 }

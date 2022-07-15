@@ -5,6 +5,7 @@ namespace Coff\Ticker\Examples;
 
 use Coff\Ticker\Tick;
 use Coff\Ticker\Ticker;
+use Coff\Ticker\Time;
 
 include (__DIR__ . '/../vendor/autoload.php');
 
@@ -14,7 +15,7 @@ class MyTick extends Tick {
     {
         $this
             ->setEveryN($everyN)
-            ->setTickType($tickType);
+            ->setInterval($tickType);
     }
 
     public function run()
@@ -25,7 +26,7 @@ class MyTick extends Tick {
 
 $ticker = new Ticker();
 
-$ticker->addTick(new MyTick(Ticker::SECOND, 1));
+$ticker->addTick(new MyTick(Time::SECOND, 1));
 
 $ticker->loop();
 

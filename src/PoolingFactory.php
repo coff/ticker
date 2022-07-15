@@ -2,6 +2,10 @@
 
 namespace Coff\Ticker;
 
+use Pool;
+use Threaded;
+use Worker;
+
 /**
  * Class PoolingFactory
  *
@@ -13,7 +17,7 @@ abstract class PoolingFactory implements TickInterface
 {
     use TickableTrait;
 
-    /** @var \Pool */
+    /** @var Pool */
     protected $pool;
 
     /** @var callable */
@@ -21,17 +25,17 @@ abstract class PoolingFactory implements TickInterface
 
     /**
      * PoolingFactory constructor.
-     * @param string $tickType
+     * @param string $interval
      * @param int $everyN
-     * @param \Pool|null $pool threading pool container, created automatically when given null here
+     * @param Pool|null $pool threading pool container, created automatically when given null here
      */
-    public function __construct($tickType, $everyN, \Pool $pool = null)
+    public function __construct(Time $interval, $everyN, Pool $pool = null)
     {
-        $this->setTickType($tickType);
+        $this->setInterval($interval);
         $this->setEveryN($everyN);
 
         if (null === $pool) {
-            $pool = new \Pool(1, \Worker::class);
+            $pool = new Pool(1, Worker::class);
         }
 
         $this->setPool($pool);
@@ -41,19 +45,19 @@ abstract class PoolingFactory implements TickInterface
     }
 
     /**
-     * @param \Pool $pool
+     * @param Pool $pool
      * @return $this
      */
-    public function setPool(\Pool $pool)
+    public function setPool(Pool $pool)
     {
         $this->pool = $pool;
         return $this;
     }
 
     /**
-     * @return \Pool
+     * @return Pool
      */
-    public function getPool(): \Pool
+    public function getPool(): Pool
     {
         return $this->pool;
     }
@@ -82,7 +86,7 @@ abstract class PoolingFactory implements TickInterface
     }
 
     /**
-     * @return \Threaded
+     * @return Threaded
      */
     abstract public function factorize();
 
@@ -91,9 +95,9 @@ abstract class PoolingFactory implements TickInterface
      *
      * Remark: If Pool is shared among several Factories then we can get here not only this Factory's threads!
      *
-     * @param \Threaded $garbage
+     * @param Threaded $garbage
      */
-    public function collect(\Threaded $garbage)
+    public function collect(Threaded $garbage)
     {
         // default method does nothing atm
     }

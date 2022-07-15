@@ -14,19 +14,13 @@ interface TickInterface
     /**
      * Returns multiplier for tickType.
      *   Examples:
-     *      - tickType=SECOND, everyN=5 then execute Tick on each fifth second (0, 5, 10, 15, 20, 25, ...)
-     **     - tickType=MINUTE, everyN=1 then execute Tick on each minute (1,2,3,4,5...)
-     *      - tickType=HOUR, everyN=6 then execute Tick once in every  6 hours (6, 12, 18, 24)
-     * @return int
+     *      - interval=SECOND, everyN=5 then execute Tick on each fifth second (0, 5, 10, 15, 20, 25, ...)
+     **     - interval=MINUTE, everyN=1 then execute Tick on each minute (1,2,3,4,5...)
+     *      - interval=HOUR, everyN=6 then execute Tick once in every  6 hours (6, 12, 18, 24)
      */
-    public function getEveryN();
+    public function getEveryN(): int;
 
-    /**
-     * Returns tick type. One of Ticker constants: MICROSECOND, SECOND, MINUTE, HOUR, DAY, etc.
-     *
-     * @return string
-     */
-    public function getTickType();
+    public function getInterval(): Time;
 
     /**
      * @return

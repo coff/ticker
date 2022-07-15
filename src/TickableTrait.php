@@ -11,54 +11,37 @@ namespace Coff\Ticker;
  */
 trait TickableTrait
 {
-    /**
-     * One of Ticker constants: MICROSECOND, SECOND, MINUTE, HOUR, DAY, etc.
-     *
-     * @var string
-     */
-    protected $tickType;
+    protected Time $interval;
 
     /**
      * TickType multiplier
      *   Examples:
-     *      - tickType=SECOND, everyN=5 then execute Tick on each fifth second (0, 5, 10, 15, 20, 25, ...)
-     *      - tickType=MINUTE, everyN=1 then execute Tick on each minute (1,2,3,4,5...)
-     *      - tickType=HOUR, everyN=6 then execute Tick once in every  6 hours (6, 12, 18, 24)
-     * @var int
+     *      - interval=SECOND, everyN=5 then execute Tick on each fifth second (0, 5, 10, 15, 20, 25, ...)
+     *      - interval=MINUTE, everyN=1 then execute Tick on each minute (1,2,3,4,5...)
+     *      - interval=HOUR, everyN=6 then execute Tick once in every  6 hours (6, 12, 18, 24)
      */
-    protected $everyN = 1;
+    protected int $everyN = 1;
 
     /**
      * @return string
      */
-    public function getTickType()
+    public function getInterval(): Time
     {
-        return $this->tickType;
+        return $this->interval;
     }
 
-    /**
-     * @param string $tickType
-     * @return $this
-     */
-    public function setTickType($tickType)
+    public function setInterval(Time $interval): self
     {
-        $this->tickType = $tickType;
+        $this->interval = $interval;
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getEveryN()
+    public function getEveryN(): int
     {
         return $this->everyN;
     }
 
-    /**
-     * @param int $everyN
-     * @return $this
-     */
-    public function setEveryN($everyN)
+    public function setEveryN(int $everyN): self
     {
         $this->everyN = $everyN;
         return $this;

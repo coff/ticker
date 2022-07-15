@@ -5,7 +5,7 @@ namespace Coff\Ticker;
 /**
  * Class CallableTick
  *
- * Use this to define simplest possible ticks - based on callback functions.
+ * Use this to define the simplest possible ticks - based on callback functions.
  *
  * @package Coff\Ticker
  */
@@ -16,63 +16,39 @@ class CallableTick implements TickInterface
     /** @var callable */
     protected $callback;
 
-    /** @var array */
-    protected $params = [];
+    /** @var array< */
+    protected array $params = [];
 
-    /**
-     * Tick constructor.
-     * @param $tickType
-     * @param $everyN
-     * @param callable|null $callback
-     * @param array|[] $params
-     */
-    public function __construct($tickType, $everyN, callable $callback = null, array $params = [])
+    public function __construct(Time $interval, int $everyN, callable $callback = null, array $params = [])
     {
-        $this->tickType = $tickType;
+        $this->interval = $interval;
         $this->everyN = $everyN;
         $this->callback = $callback;
         $this->params = $params;
     }
 
-    /**
-     * Run calling a callback
-     */
-    public function run()
+    public function run(): void
     {
         call_user_func_array($this->callback, $this->params);
     }
 
-    /**
-     * @return callable
-     */
-    public function getCallback()
+    public function getCallback(): callable
     {
         return $this->callback;
     }
 
-    /**
-     * @param callable $callback
-     * @return $this
-     */
-    public function setCallback(callable $callback)
+    public function setCallback(callable $callback): self
     {
         $this->callback = $callback;
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getParams()
+    public function getParams(): array
     {
         return $this->params;
     }
 
-    /**
-     * @param array $params
-     * @return $this
-     */
-    public function setParams(array $params)
+    public function setParams(array $params): self
     {
         $this->params = $params;
         return $this;

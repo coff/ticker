@@ -5,6 +5,7 @@ namespace Coff\Ticker\Examples;
 
 use Coff\Ticker\CallableTick;
 use Coff\Ticker\Ticker;
+use Coff\Ticker\Time;
 
 include (__DIR__ . '/../vendor/autoload.php');
 
@@ -13,13 +14,13 @@ include (__DIR__ . '/../vendor/autoload.php');
 
 $ticker = new Ticker();
 
-$ticker->addTick(new CallableTick(Ticker::SECOND, 1, function () {
+$ticker->addTick(new CallableTick(Time::SECOND, 1, function () {
     echo '<';
     sleep(6);
     echo '>';
 }));
 
-$ticker->addTick(new CallableTick(Ticker::SECOND, 5, function() {
+$ticker->addTick(new CallableTick(Time::SECOND, 5, function() {
     echo '#';
 }));
 

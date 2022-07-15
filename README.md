@@ -21,15 +21,15 @@ Simple yet powerful time period based event dispatcher.
 ```php
 $ticker = new Ticker();
 
-$ticker->addTick(new Tick(Ticker::SECOND, 1, function () {
+$ticker->addTick(new Tick(Time::SECOND, 1, function () {
     // do it every second
 }));
 
-$ticker->addTick(new Tick(Ticker::SECOND, 5, function () {
+$ticker->addTick(new Tick(Time::SECOND, 5, function () {
     // do it every 5 seconds
 }));
 
-$ticker->addTick(new Tick(Ticker::MINUTE, 1, function() {
+$ticker->addTick(new Tick(Time::MINUTE, 1, function() {
     // do it every minute
 }));
 
@@ -43,7 +43,7 @@ $ticker->loop();
 $tick = new class extends Tick {
 
     protected $everyN = 1;
-    protected $tickType = Ticker::HOUR;
+    protected $interval = Time::HOUR;
 
     public function run() 
     {
@@ -93,8 +93,8 @@ with separate pools:
 
 ```php
 
-$ticker->addTick($t1 = new FactoryA(Ticker::SECOND, 1));
-$ticker->addTick($t2 = new FactoryB(Ticker::SECOND, 1));
+$ticker->addTick($t1 = new FactoryA(Time::SECOND, 1));
+$ticker->addTick($t2 = new FactoryB(Time::SECOND, 1));
 
 $ticker->loop();
 
@@ -107,8 +107,8 @@ and shared pool:
 ```php
 $pool = new \Pool(3, \Worker::class);
 
-$ticker->addTick($t1 = new FactoryA(Ticker::SECOND, 1, $pool));
-$ticker->addTick($t2 = new FactoryB(Ticker::SECOND, 1, $pool));
+$ticker->addTick($t1 = new FactoryA(Time::SECOND, 1, $pool));
+$ticker->addTick($t2 = new FactoryB(Time::SECOND, 1, $pool));
 
 $ticker->loop();
 

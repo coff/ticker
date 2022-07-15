@@ -2,68 +2,61 @@
 
 namespace Coff\Ticker;
 
+use DateTime;
+
 /**
  * Class Ticker
  * @package Coff\Ticker
  */
 class Ticker
 {
-    const
-        YEAR = 'y',
-        MONTH = 'n',
-        WEEK = 'W',
-        DAY = 'z',
-        HOUR = 'G',
-        MINUTE = 'i',
-        SECOND = 's',
-        SECOND_10TH = 's/10',
-        SECOND_100TH = 's/100',
-        SECOND_1000TH = 's/1000',
-        SECOND_10000TH = 's/10000',
-        MICROSECOND = 'u';
+    protected ?int $uSleep = 0;
 
-    /** @var int $uSleep sleep time in microseconds */
-    protected $uSleep = 0;
-
-    /** @var int $sleep sleep time in seconds */
-    protected $sleep = 0;
+    protected ?int $sleep = 0;
 
     /** @var bool $sleepLocked whether sleepTime is set manually (normally is determined automatically upon Ticks' periods */
-    protected $sleepLocked = false;
+    protected bool $sleepLocked = false;
 
-    /** @var */
-    protected $callbacks = [
-        self::MICROSECOND => [],
-        self::SECOND_10000TH => [],
-        self::SECOND_1000TH => [],
-        self::SECOND_100TH => [],
-        self::SECOND_10TH => [],
-        self::SECOND => [],
-        self::MINUTE => [],
-        self::HOUR => [],
-        self::DAY => [],
-        self::WEEK => [],
-        self::MONTH => [],
-        self::YEAR => [],
-    ];
+    protected array $callbacks;
 
-    /** @var array $activeTicks keeps periods that have Ticks added */
-    protected $activeTicks;
+    protected array $activeTicks;
 
-    /** @var array $lasts keeps last calls for each period */
-    private $lasts;
+    private array $lasts;
 
-    /** @var array $periods */
-    private $periods = [
-        self::YEAR,
-        self::MONTH,
-        self::WEEK,
-        self::DAY,
-        self::HOUR,
-        self::MINUTE,
-        self::SECOND,
-        self::MICROSECOND,
-    ];
+    private array $periods;
+
+    public function __construct()
+    {
+        /**
+         * a bit dirty workaround since expressions are not allowed outside class methods and
+         * PHP Enums are not allowed as array keys
+         */
+        $this->callbacks = [
+            Time::MICROSECOND->value => [],
+            Time::SECOND_10000TH->value => [],
+            Time::SECOND_1000TH->value => [],
+            Time::SECOND_100TH->value => [],
+            Time::SECOND_10TH->value => [],
+            Time::SECOND->value => [],
+            Time::MINUTE->value => [],
+            Time::HOUR->value => [],
+            Time::DAY->value => [],
+            Time::WEEK->value => [],
+            Time::MONTH->value => [],
+            Time::YEAR->value => [],
+        ];
+
+        $this->periods = [
+            Time::YEAR->value,
+            Time::MONTH->value,
+            Time::WEEK->value,
+            Time::DAY->value,
+            Time::HOUR->value,
+            Time::MINUTE->value,
+            Time::SECOND->value,
+            Time::MICROSECOND->value,
+        ];
+    }
 
 
     /**
@@ -82,14 +75,14 @@ class Ticker
         while (true) {
 
             /* \DateTime supports microseconds, date() does not */
-            $dateTime = new \DateTime();
+            $dateTime = new DateTime();
 
             $time = array_combine($this->periods, explode(",", $dateTime->format($timeFormat)));
 
-            $time[self::SECOND_10TH] = substr($time[self::MICROSECOND],0,1);
-            $time[self::SECOND_100TH] = substr($time[self::MICROSECOND],0,2);
-            $time[self::SECOND_1000TH] = substr($time[self::MICROSECOND],0,3);
-            $time[self::SECOND_10000TH] = substr($time[self::MICROSECOND],0,4);
+            $time[Time::SECOND_10TH->value] = substr($time[Time::MICROSECOND->value],0,1);
+            $time[Time::SECOND_100TH->value] = substr($time[Time::MICROSECOND->value],0,2);
+            $time[Time::SECOND_1000TH->value] = substr($time[Time::MICROSECOND->value],0,3);
+            $time[Time::SECOND_10000TH->value] = substr($time[Time::MICROSECOND->value],0,4);
 
             foreach ($this->activeTicks as $tickType) {
 
@@ -150,43 +143,43 @@ class Ticker
                  * Automatically determine sleep/usleep.
                  */
                 switch ($tickType) {
-                    case self::SECOND_10000TH:
+                    case Time::SECOND_10000TH:
                         $this->uSleep = 10; // 1/10000th of a second
                         $this->sleep = 0;
                         break;
-                    case self::SECOND_1000TH:
+                    case Time::SECOND_1000TH:
                         $this->uSleep = 100; // 1/10000th of a second
                         $this->sleep = 0;
                         break;
-                    case self::SECOND_100TH:
+                    case Time::SECOND_100TH:
                         $this->uSleep = 1000; // 1/1000th of a second
                         $this->sleep = 0;
                         break;
-                    case self::SECOND_10TH:
+                    case Time::SECOND_10TH:
                         $this->uSleep = 10000; // 1/100th of a second
                         $this->sleep = 0;
                         break;
-                    case self::SECOND:
+                    case Time::SECOND:
                         $this->uSleep = 100000; // 1/10th of a second
                         $this->sleep = 0;
                         break;
-                    case self::MINUTE:
+                    case Time::MINUTE:
                         $this->uSleep = 0;
                         $this->sleep = 1; // one second of sleep
                         break;
-                    case self::HOUR:
+                    case Time::HOUR:
                         $this->uSleep = 0;
                         $this->sleep = 60; // one minute of sleep
                         break;
-                    case self::DAY:
+                    case Time::DAY:
                         $this->uSleep = 0;
                         $this->sleep = 60 * 60; // one hour of sleep
                         break;
-                    case self::MONTH:
+                    case Time::MONTH:
                         // no break
-                    case self::YEAR:
+                    case Time::YEAR:
                         // no break
-                    case self::WEEK:
+                    case Time::WEEK:
                         /* one tick per day - seems like a program in coma ;) */
                         $this->uSleep = 0;
                         $this->sleep = 60 * 60 * 24; // one day of sleep
@@ -209,7 +202,7 @@ class Ticker
     public function addTick(TickInterface $tick, $updateActiveTicks = true)
     {
 
-        $this->callbacks[$tick->getTickType()][] = $tick;
+        $this->callbacks[$tick->getInterval()->value][] = $tick;
 
         if ($updateActiveTicks) {
             $this->updateActiveTicks();

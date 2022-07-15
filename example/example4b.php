@@ -5,13 +5,17 @@ namespace Coff\Ticker\Examples;
 
 use Coff\Ticker\PoolingFactory;
 use Coff\Ticker\Ticker;
+use Coff\Ticker\Time;
+use Pool;
+use Threaded;
+use Worker;
 
 include (__DIR__ . '/../vendor/autoload.php');
 
 /*
  * This example shows usage of Ticker with threading (PHP 7.2+)
  * Introducing two factories that factorize Threaded objects as ticks.
- * Each object has its own Pool assigned but they can also share one pool.
+ * Each object has its own Pool assigned, but they can also share one pool.
  * This case runs similar tasks as example 3 but due to threading
  * now tasks aren't skipped! When running this example you can clearly see
  * that #-task is executed several times while <-> task still perfoms its
@@ -25,7 +29,7 @@ class FactoryA extends PoolingFactory
 {
     public function factorize()
     {
-        return new class extends \Threaded {
+        return new class extends Threaded {
             public function run()
             {
                 echo '<';
@@ -41,7 +45,7 @@ class FactoryB extends PoolingFactory
 {
     public function factorize()
     {
-        return new class extends \Threaded {
+        return new class extends Threaded {
             public function run()
             {
                 echo '#';
@@ -52,7 +56,9 @@ class FactoryB extends PoolingFactory
 
 $ticker = new Ticker();
 
-$ticker->addTick($t1 = new FactoryA(Ticker::SECOND, 1));
-$ticker->addTick($t2 = new FactoryB(Ticker::SECOND, 1));
+$pool = new Pool(3, Worker::class);
+
+$ticker->addTick($t1 = new FactoryA(Time::SECOND, 1, $pool));
+$ticker->addTick($t2 = new FactoryB(Time::SECOND, 1, $pool));
 
 $ticker->loop();
