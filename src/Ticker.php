@@ -62,9 +62,8 @@ class Ticker
     /**
      * Main ticker loop. Call it to execute Ticker.
      */
-    public function loop()
+    public function loop(DateTime $until = null): void
     {
-
         $timeFormat = implode(',', $this->periods);
 
         $this->updateActiveTicks();
@@ -76,6 +75,10 @@ class Ticker
 
             /* \DateTime supports microseconds, date() does not */
             $dateTime = new DateTime();
+
+            if ($until !== null && $dateTime > $until) {
+                break;
+            }
 
             $time = array_combine($this->periods, explode(",", $dateTime->format($timeFormat)));
 
