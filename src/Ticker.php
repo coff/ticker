@@ -24,6 +24,8 @@ class Ticker
 
     private array $periods;
 
+    private string $timeFormat;
+
     public function __construct()
     {
         /*
@@ -55,6 +57,21 @@ class Ticker
             Time::SECOND->value,
             Time::MICROSECOND->value,
         ];
+
+        $this->timeFormat = implode(',', $this->periods);
+    }
+
+    private function splitTime(DateTime $dateTime): array
+    {
+        $time = explode(',', $dateTime->format($this->timeFormat));
+        $arr = array_combine($this->periods, $time);
+
+        $arr[Time::SECOND_10TH->value] = substr($arr[Time::MICROSECOND->value], 0, 1);
+        $arr[Time::SECOND_100TH->value] = substr($arr[Time::MICROSECOND->value], 0, 2);
+        $arr[Time::SECOND_1000TH->value] = substr($arr[Time::MICROSECOND->value], 0, 3);
+        $arr[Time::SECOND_10000TH->value] = substr($arr[Time::MICROSECOND->value], 0, 4);
+
+        return $arr;
     }
 
     /**
@@ -62,11 +79,9 @@ class Ticker
      */
     public function loop(DateTime $until = null): void
     {
-        $timeFormat = implode(',', $this->periods);
-
         $this->updateActiveTicks();
 
-        $this->lasts = array_combine($this->periods, explode(',', date($timeFormat)));
+        $this->lasts = $this->splitTime(new DateTime());
 
         /* main loop */
         while (true) {
@@ -77,12 +92,7 @@ class Ticker
                 break;
             }
 
-            $time = array_combine($this->periods, explode(',', $dateTime->format($timeFormat)));
-
-            $time[Time::SECOND_10TH->value] = substr($time[Time::MICROSECOND->value], 0, 1);
-            $time[Time::SECOND_100TH->value] = substr($time[Time::MICROSECOND->value], 0, 2);
-            $time[Time::SECOND_1000TH->value] = substr($time[Time::MICROSECOND->value], 0, 3);
-            $time[Time::SECOND_10000TH->value] = substr($time[Time::MICROSECOND->value], 0, 4);
+            $time = $this->splitTime($dateTime);
 
             foreach ($this->activeTicks as $tickType) {
                 /* let's verify if we already called callbacks for current usec, sec, min, hr, ... */

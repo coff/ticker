@@ -20,8 +20,5 @@ interface TickInterface
 
     public function getInterval(): Time;
 
-    /**
-     * @return
-     */
-    public function run();
+    public function run(): void;
 }

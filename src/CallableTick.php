@@ -14,15 +14,14 @@ class CallableTick implements TickInterface
     /** @var callable */
     protected $callback;
 
-    /** @var array< */
-    protected array $params = [];
-
-    public function __construct(Time $interval, int $everyN, callable $callback = null, array $params = [])
+    public function __construct(
+        protected Time $interval,
+        int $everyN,
+        callable $callback,
+        protected array $params = [])
     {
-        $this->interval = $interval;
         $this->everyN = $everyN;
         $this->callback = $callback;
-        $this->params = $params;
     }
 
     public function run(): void
