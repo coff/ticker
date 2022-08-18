@@ -3,11 +3,9 @@
 namespace Coff\Ticker;
 
 /**
- * Class CallableTick
+ * Class CallableTick.
  *
  * Use this to define the simplest possible ticks - based on callback functions.
- *
- * @package Coff\Ticker
  */
 class CallableTick implements TickInterface
 {
@@ -40,6 +38,7 @@ class CallableTick implements TickInterface
     public function setCallback(callable $callback): self
     {
         $this->callback = $callback;
+
         return $this;
     }
 
@@ -51,8 +50,7 @@ class CallableTick implements TickInterface
     public function setParams(array $params): self
     {
         $this->params = $params;
+
         return $this;
     }
-
-
 }

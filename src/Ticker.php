@@ -5,8 +5,7 @@ namespace Coff\Ticker;
 use DateTime;
 
 /**
- * Class Ticker
- * @package Coff\Ticker
+ * Class Ticker.
  */
 class Ticker
 {
@@ -14,7 +13,7 @@ class Ticker
 
     protected ?int $sleep = 0;
 
-    /** @var bool $sleepLocked whether sleepTime is set manually (normally is determined automatically upon Ticks' periods */
+    /** @var bool whether sleepTime is set manually (normally is determined automatically upon Ticks' periods */
     protected bool $sleepLocked = false;
 
     protected array $callbacks;
@@ -27,7 +26,7 @@ class Ticker
 
     public function __construct()
     {
-        /**
+        /*
          * a bit dirty workaround since expressions are not allowed outside class methods and
          * PHP Enums are not allowed as array keys
          */
@@ -58,7 +57,6 @@ class Ticker
         ];
     }
 
-
     /**
      * Main ticker loop. Call it to execute Ticker.
      */
@@ -68,34 +66,29 @@ class Ticker
 
         $this->updateActiveTicks();
 
-        $this->lasts = array_combine($this->periods, explode(",", date($timeFormat)));
+        $this->lasts = array_combine($this->periods, explode(',', date($timeFormat)));
 
         /* main loop */
         while (true) {
-
             /* \DateTime supports microseconds, date() does not */
             $dateTime = new DateTime();
 
-            if ($until !== null && $dateTime > $until) {
+            if (null !== $until && $dateTime > $until) {
                 break;
             }
 
-            $time = array_combine($this->periods, explode(",", $dateTime->format($timeFormat)));
+            $time = array_combine($this->periods, explode(',', $dateTime->format($timeFormat)));
 
-            $time[Time::SECOND_10TH->value] = substr($time[Time::MICROSECOND->value],0,1);
-            $time[Time::SECOND_100TH->value] = substr($time[Time::MICROSECOND->value],0,2);
-            $time[Time::SECOND_1000TH->value] = substr($time[Time::MICROSECOND->value],0,3);
-            $time[Time::SECOND_10000TH->value] = substr($time[Time::MICROSECOND->value],0,4);
+            $time[Time::SECOND_10TH->value] = substr($time[Time::MICROSECOND->value], 0, 1);
+            $time[Time::SECOND_100TH->value] = substr($time[Time::MICROSECOND->value], 0, 2);
+            $time[Time::SECOND_1000TH->value] = substr($time[Time::MICROSECOND->value], 0, 3);
+            $time[Time::SECOND_10000TH->value] = substr($time[Time::MICROSECOND->value], 0, 4);
 
             foreach ($this->activeTicks as $tickType) {
-
-
                 /* let's verify if we already called callbacks for current usec, sec, min, hr, ... */
                 if ($time[$tickType] !== $this->lasts[$tickType]) {
-
                     /** @var Tick $tick */
                     foreach ($this->callbacks[$tickType] as $tick) {
-
                         /*  Remark:
                          *    A flaw of this kind of design is that some ticks
                          *    may get skipped if other tasks take too much time.
@@ -119,17 +112,16 @@ class Ticker
     /**
      * Updates list of active ticks. Automatically performed upon each addTick() call.
      */
-    public function updateActiveTicks()
+    public function updateActiveTicks(): void
     {
         $this->activeTicks = [];
 
-        if ($this->sleepLocked === false) {
+        if (false === $this->sleepLocked) {
             $this->uSleep = null;
             $this->sleep = null;
         }
 
         foreach ($this->callbacks as $tickType => $callbacks) {
-
             if ($callbacks) {
                 $this->activeTicks[] = $tickType;
 
@@ -179,9 +171,7 @@ class Ticker
                         $this->sleep = 60 * 60; // one hour of sleep
                         break;
                     case Time::MONTH:
-                        // no break
                     case Time::YEAR:
-                        // no break
                     case Time::WEEK:
                         /* one tick per day - seems like a program in coma ;) */
                         $this->uSleep = 0;
@@ -197,14 +187,14 @@ class Ticker
     }
 
     /**
-     * Adds tick definition
-     * @param TickInterface $tick
+     * Adds tick definition.
+     *
      * @param bool $updateActiveTicks
+     *
      * @return $this
      */
     public function addTick(TickInterface $tick, $updateActiveTicks = true)
     {
-
         $this->callbacks[$tick->getInterval()->value][] = $tick;
 
         if ($updateActiveTicks) {
@@ -218,14 +208,13 @@ class Ticker
      * Sets uSleep time manually - value that ticker can't overwrite (unless given null here) with its automatically
      * determined value.
      *
-     * @param int|null $uSleep
      * @return $this
      */
     public function setUSleep(int $uSleep = null)
     {
         $this->uSleep = $uSleep;
 
-        if ($uSleep === null) {
+        if (null === $uSleep) {
             $this->sleepLocked = false;
         } else {
             $this->sleepLocked = true;
@@ -238,21 +227,18 @@ class Ticker
      * Sets uSleep time manually - value that ticker can't overwrite (unless given null here) with its automatically
      * determined value.
      *
-     * @param int|null $sleep
      * @return $this
      */
     public function setSleep(int $sleep = null)
     {
         $this->sleep = $sleep;
 
-        if ($sleep === null) {
+        if (null === $sleep) {
             $this->sleepLocked = false;
         } else {
             $this->sleepLocked = true;
         }
 
-
         return $this;
     }
-
 }

@@ -7,11 +7,9 @@ use Threaded;
 use Worker;
 
 /**
- * Class PoolingFactory
+ * Class PoolingFactory.
  *
  * Use this class to factorize threads for use with Ticker object.
- *
- * @package Coff\Ticker
  */
 abstract class PoolingFactory implements TickInterface
 {
@@ -25,9 +23,10 @@ abstract class PoolingFactory implements TickInterface
 
     /**
      * PoolingFactory constructor.
-     * @param string $interval
-     * @param int $everyN
-     * @param Pool|null $pool threading pool container, created automatically when given null here
+     *
+     * @param string    $interval
+     * @param int       $everyN
+     * @param Pool|null $pool     threading pool container, created automatically when given null here
      */
     public function __construct(Time $interval, $everyN, Pool $pool = null)
     {
@@ -45,37 +44,34 @@ abstract class PoolingFactory implements TickInterface
     }
 
     /**
-     * @param Pool $pool
      * @return $this
      */
     public function setPool(Pool $pool)
     {
         $this->pool = $pool;
+
         return $this;
     }
 
-    /**
-     * @return Pool
-     */
     public function getPool(): Pool
     {
         return $this->pool;
     }
 
     /**
-     * @param callable $collector
      * @return $this
      */
     public function setCollector(callable $collector)
     {
         $this->collector = $collector;
+
         return $this;
     }
 
     /**
      * Default run method.
      */
-    public function run()
+    public function run(): void
     {
         $this->pool->submit($this->factorize());
 
@@ -91,13 +87,11 @@ abstract class PoolingFactory implements TickInterface
     abstract public function factorize();
 
     /**
-     * Collects finished threads for post-run processing
+     * Collects finished threads for post-run processing.
      *
      * Remark: If Pool is shared among several Factories then we can get here not only this Factory's threads!
-     *
-     * @param Threaded $garbage
      */
-    public function collect(Threaded $garbage)
+    public function collect(Threaded $garbage): void
     {
         // default method does nothing atm
     }

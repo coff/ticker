@@ -10,7 +10,7 @@ use Pool;
 use Threaded;
 use Worker;
 
-include (__DIR__ . '/../vendor/autoload.php');
+include __DIR__.'/../vendor/autoload.php';
 
 /*
  * This example shows usage of Ticker with threading (PHP 7.2+)
@@ -29,8 +29,8 @@ class FactoryA extends PoolingFactory
 {
     public function factorize()
     {
-        return new class extends Threaded {
-            public function run()
+        return new class() extends Threaded {
+            public function run(): void
             {
                 echo '<';
                 sleep(6);
@@ -38,15 +38,14 @@ class FactoryA extends PoolingFactory
             }
         };
     }
-
 }
 
 class FactoryB extends PoolingFactory
 {
     public function factorize()
     {
-        return new class extends Threaded {
-            public function run()
+        return new class() extends Threaded {
+            public function run(): void
             {
                 echo '#';
             }
